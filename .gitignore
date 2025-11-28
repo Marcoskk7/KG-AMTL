@@ -86,6 +86,7 @@ kg_outputs/
 # ------------------------------
 .vscode/
 .idea/
+.cursor/
 *.swp
 *.swo
 
