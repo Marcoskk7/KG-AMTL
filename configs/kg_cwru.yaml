@@ -1,0 +1,49 @@
+data:
+  root_dir: "data/CRWU"
+  channel: "DE"          # 选择驱动端通道
+  sample_length: 2400    # 与 KG_2_Final 中保持一致
+  num_samples_per_file: 50
+
+features:
+  fs: 12000
+  n_jobs: -1          # 使用全部 CPU 核进行并行特征提取
+  vmd:
+    alpha: 1000
+    tau: 0
+    K: 4
+    DC: 0
+    init: 1
+    tol: 1.0e-7
+
+kg:
+  fcm:
+    m: 2.0
+    max_iter: 100
+    tol: 1.0e-6
+    random_state: 42
+  edge_threshold: 0.005
+  save_dir: "kg_outputs"
+
+visualization:
+  enable_bipartite_plot: true
+  bipartite_png: "kg_outputs/kg_visualization.png"
+
+  enable_heatmap: true
+  heatmap_png: "kg_outputs/W_heatmap.png"
+
+  enable_topk: true
+  topk_k: 10
+  topk_dir: "kg_outputs/topk_features"
+
+fault_evolution:
+  enable: true
+  fault_states:
+    - "Normal"
+    - "Inner Race"
+    - "Outer Race"
+    - "Ball"
+  preset: "doc5_example"
+  edge_threshold: 0.01
+  save_dir: "kg_outputs"
+
+

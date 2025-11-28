@@ -1,0 +1,84 @@
+<?xml version='1.0' encoding='utf-8'?>
+<graphml xmlns="http://graphml.graphdrawing.org/xmlns" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://graphml.graphdrawing.org/xmlns http://graphml.graphdrawing.org/xmlns/1.0/graphml.xsd">
+  <key id="d2" for="edge" attr.name="prob" attr.type="double" />
+  <key id="d1" for="edge" attr.name="weight" attr.type="double" />
+  <key id="d0" for="node" attr.name="type" attr.type="string" />
+  <graph edgedefault="directed">
+    <node id="Normal">
+      <data key="d0">fault_state</data>
+    </node>
+    <node id="Inner Race">
+      <data key="d0">fault_state</data>
+    </node>
+    <node id="Outer Race">
+      <data key="d0">fault_state</data>
+    </node>
+    <node id="Ball">
+      <data key="d0">fault_state</data>
+    </node>
+    <edge source="Normal" target="Normal">
+      <data key="d1">0.85</data>
+      <data key="d2">0.85</data>
+    </edge>
+    <edge source="Normal" target="Inner Race">
+      <data key="d1">0.049999999999999996</data>
+      <data key="d2">0.049999999999999996</data>
+    </edge>
+    <edge source="Normal" target="Outer Race">
+      <data key="d1">0.049999999999999996</data>
+      <data key="d2">0.049999999999999996</data>
+    </edge>
+    <edge source="Normal" target="Ball">
+      <data key="d1">0.049999999999999996</data>
+      <data key="d2">0.049999999999999996</data>
+    </edge>
+    <edge source="Inner Race" target="Normal">
+      <data key="d1">0.13333333333333336</data>
+      <data key="d2">0.13333333333333336</data>
+    </edge>
+    <edge source="Inner Race" target="Inner Race">
+      <data key="d1">0.6000000000000001</data>
+      <data key="d2">0.6000000000000001</data>
+    </edge>
+    <edge source="Inner Race" target="Outer Race">
+      <data key="d1">0.13333333333333336</data>
+      <data key="d2">0.13333333333333336</data>
+    </edge>
+    <edge source="Inner Race" target="Ball">
+      <data key="d1">0.13333333333333336</data>
+      <data key="d2">0.13333333333333336</data>
+    </edge>
+    <edge source="Outer Race" target="Normal">
+      <data key="d1">0.13333333333333333</data>
+      <data key="d2">0.13333333333333333</data>
+    </edge>
+    <edge source="Outer Race" target="Inner Race">
+      <data key="d1">0.13333333333333333</data>
+      <data key="d2">0.13333333333333333</data>
+    </edge>
+    <edge source="Outer Race" target="Outer Race">
+      <data key="d1">0.6</data>
+      <data key="d2">0.6</data>
+    </edge>
+    <edge source="Outer Race" target="Ball">
+      <data key="d1">0.13333333333333333</data>
+      <data key="d2">0.13333333333333333</data>
+    </edge>
+    <edge source="Ball" target="Normal">
+      <data key="d1">0.13333333333333333</data>
+      <data key="d2">0.13333333333333333</data>
+    </edge>
+    <edge source="Ball" target="Inner Race">
+      <data key="d1">0.13333333333333333</data>
+      <data key="d2">0.13333333333333333</data>
+    </edge>
+    <edge source="Ball" target="Outer Race">
+      <data key="d1">0.13333333333333333</data>
+      <data key="d2">0.13333333333333333</data>
+    </edge>
+    <edge source="Ball" target="Ball">
+      <data key="d1">0.6</data>
+      <data key="d2">0.6</data>
+    </edge>
+  </graph>
+</graphml>

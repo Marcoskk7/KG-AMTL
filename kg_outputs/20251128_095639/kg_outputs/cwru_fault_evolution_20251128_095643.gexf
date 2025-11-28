@@ -1,0 +1,118 @@
+<?xml version='1.0' encoding='utf-8'?>
+<gexf xmlns="http://www.gexf.net/1.2draft" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.gexf.net/1.2draft http://www.gexf.net/1.2draft/gexf.xsd" version="1.2">
+  <meta lastmodifieddate="2025-11-28">
+    <creator>NetworkX 3.4.2</creator>
+  </meta>
+  <graph defaultedgetype="directed" mode="static" name="">
+    <attributes mode="static" class="edge">
+      <attribute id="1" title="prob" type="double" />
+    </attributes>
+    <attributes mode="static" class="node">
+      <attribute id="0" title="type" type="string" />
+    </attributes>
+    <nodes>
+      <node id="Normal" label="Normal">
+        <attvalues>
+          <attvalue for="0" value="fault_state" />
+        </attvalues>
+      </node>
+      <node id="Inner Race" label="Inner Race">
+        <attvalues>
+          <attvalue for="0" value="fault_state" />
+        </attvalues>
+      </node>
+      <node id="Outer Race" label="Outer Race">
+        <attvalues>
+          <attvalue for="0" value="fault_state" />
+        </attvalues>
+      </node>
+      <node id="Ball" label="Ball">
+        <attvalues>
+          <attvalue for="0" value="fault_state" />
+        </attvalues>
+      </node>
+    </nodes>
+    <edges>
+      <edge source="Normal" target="Normal" id="0" weight="0.85">
+        <attvalues>
+          <attvalue for="1" value="0.85" />
+        </attvalues>
+      </edge>
+      <edge source="Normal" target="Inner Race" id="1" weight="0.049999999999999996">
+        <attvalues>
+          <attvalue for="1" value="0.049999999999999996" />
+        </attvalues>
+      </edge>
+      <edge source="Normal" target="Outer Race" id="2" weight="0.049999999999999996">
+        <attvalues>
+          <attvalue for="1" value="0.049999999999999996" />
+        </attvalues>
+      </edge>
+      <edge source="Normal" target="Ball" id="3" weight="0.049999999999999996">
+        <attvalues>
+          <attvalue for="1" value="0.049999999999999996" />
+        </attvalues>
+      </edge>
+      <edge source="Inner Race" target="Normal" id="4" weight="0.13333333333333336">
+        <attvalues>
+          <attvalue for="1" value="0.13333333333333336" />
+        </attvalues>
+      </edge>
+      <edge source="Inner Race" target="Inner Race" id="5" weight="0.6000000000000001">
+        <attvalues>
+          <attvalue for="1" value="0.6000000000000001" />
+        </attvalues>
+      </edge>
+      <edge source="Inner Race" target="Outer Race" id="6" weight="0.13333333333333336">
+        <attvalues>
+          <attvalue for="1" value="0.13333333333333336" />
+        </attvalues>
+      </edge>
+      <edge source="Inner Race" target="Ball" id="7" weight="0.13333333333333336">
+        <attvalues>
+          <attvalue for="1" value="0.13333333333333336" />
+        </attvalues>
+      </edge>
+      <edge source="Outer Race" target="Normal" id="8" weight="0.13333333333333333">
+        <attvalues>
+          <attvalue for="1" value="0.13333333333333333" />
+        </attvalues>
+      </edge>
+      <edge source="Outer Race" target="Inner Race" id="9" weight="0.13333333333333333">
+        <attvalues>
+          <attvalue for="1" value="0.13333333333333333" />
+        </attvalues>
+      </edge>
+      <edge source="Outer Race" target="Outer Race" id="10" weight="0.6">
+        <attvalues>
+          <attvalue for="1" value="0.6" />
+        </attvalues>
+      </edge>
+      <edge source="Outer Race" target="Ball" id="11" weight="0.13333333333333333">
+        <attvalues>
+          <attvalue for="1" value="0.13333333333333333" />
+        </attvalues>
+      </edge>
+      <edge source="Ball" target="Normal" id="12" weight="0.13333333333333333">
+        <attvalues>
+          <attvalue for="1" value="0.13333333333333333" />
+        </attvalues>
+      </edge>
+      <edge source="Ball" target="Inner Race" id="13" weight="0.13333333333333333">
+        <attvalues>
+          <attvalue for="1" value="0.13333333333333333" />
+        </attvalues>
+      </edge>
+      <edge source="Ball" target="Outer Race" id="14" weight="0.13333333333333333">
+        <attvalues>
+          <attvalue for="1" value="0.13333333333333333" />
+        </attvalues>
+      </edge>
+      <edge source="Ball" target="Ball" id="15" weight="0.6">
+        <attvalues>
+          <attvalue for="1" value="0.6" />
+        </attvalues>
+      </edge>
+    </edges>
+  </graph>
+</gexf>
