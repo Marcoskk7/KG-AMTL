@@ -51,7 +51,7 @@ def batch_extract_features(
     vmd_params: Optional[dict] = None,
     scaler: Optional[MinMaxScaler] = None,
     fit_scaler: bool = True,
-    n_jobs: int = 1,
+    n_jobs: int = -1,
 ) -> Tuple[np.ndarray, MinMaxScaler]:
     """
     对一批信号（N×L）执行特征提取并做 MinMax 归一化。

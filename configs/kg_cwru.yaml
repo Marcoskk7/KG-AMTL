@@ -1,5 +1,5 @@
 data:
-  root_dir: "data/CRWU"
+  root_dir: "data/CWRU"
   channel: "DE"          # 选择驱动端通道
   sample_length: 2400    # 与 KG_2_Final 中保持一致
   num_samples_per_file: 50

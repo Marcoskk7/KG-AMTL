@@ -1,0 +1,712 @@
+<?xml version='1.0' encoding='utf-8'?>
+<graphml xmlns="http://graphml.graphdrawing.org/xmlns" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://graphml.graphdrawing.org/xmlns http://graphml.graphdrawing.org/xmlns/1.0/graphml.xsd">
+  <key id="d5" for="edge" attr.name="prob" attr.type="double" />
+  <key id="d4" for="edge" attr.name="weight" attr.type="double" />
+  <key id="d3" for="edge" attr.name="etype" attr.type="string" />
+  <key id="d2" for="node" attr.name="name" attr.type="string" />
+  <key id="d1" for="node" attr.name="kind" attr.type="string" />
+  <key id="d0" for="graph" attr.name="name" attr.type="string" />
+  <graph edgedefault="directed">
+    <node id="F_0">
+      <data key="d1">feature</data>
+      <data key="d2">Mean</data>
+    </node>
+    <node id="F_1">
+      <data key="d1">feature</data>
+      <data key="d2">Std</data>
+    </node>
+    <node id="F_2">
+      <data key="d1">feature</data>
+      <data key="d2">Sq-Mean-of-Sqrt</data>
+    </node>
+    <node id="F_3">
+      <data key="d1">feature</data>
+      <data key="d2">RMS</data>
+    </node>
+    <node id="F_4">
+      <data key="d1">feature</data>
+      <data key="d2">Peak</data>
+    </node>
+    <node id="F_5">
+      <data key="d1">feature</data>
+      <data key="d2">Skewness</data>
+    </node>
+    <node id="F_6">
+      <data key="d1">feature</data>
+      <data key="d2">Kurtosis</data>
+    </node>
+    <node id="F_7">
+      <data key="d1">feature</data>
+      <data key="d2">Waveform-Factor</data>
+    </node>
+    <node id="F_8">
+      <data key="d1">feature</data>
+      <data key="d2">Peak-Factor</data>
+    </node>
+    <node id="F_9">
+      <data key="d1">feature</data>
+      <data key="d2">Impulse-Factor</data>
+    </node>
+    <node id="F_10">
+      <data key="d1">feature</data>
+      <data key="d2">Crest-Factor</data>
+    </node>
+    <node id="F_11">
+      <data key="d1">feature</data>
+      <data key="d2">Freq-Mean</data>
+    </node>
+    <node id="F_12">
+      <data key="d1">feature</data>
+      <data key="d2">Freq-Var</data>
+    </node>
+    <node id="F_13">
+      <data key="d1">feature</data>
+      <data key="d2">Freq-Skewness</data>
+    </node>
+    <node id="F_14">
+      <data key="d1">feature</data>
+      <data key="d2">Freq-Kurtosis</data>
+    </node>
+    <node id="F_15">
+      <data key="d1">feature</data>
+      <data key="d2">Freq-Center</data>
+    </node>
+    <node id="F_16">
+      <data key="d1">feature</data>
+      <data key="d2">Freq-RMS</data>
+    </node>
+    <node id="F_17">
+      <data key="d1">feature</data>
+      <data key="d2">Freq-Std</data>
+    </node>
+    <node id="F_18">
+      <data key="d1">feature</data>
+      <data key="d2">Freq-4th-RMS</data>
+    </node>
+    <node id="F_19">
+      <data key="d1">feature</data>
+      <data key="d2">Freq-Shape-Factor</data>
+    </node>
+    <node id="F_20">
+      <data key="d1">feature</data>
+      <data key="d2">Freq-Skew-Factor</data>
+    </node>
+    <node id="F_21">
+      <data key="d1">feature</data>
+      <data key="d2">Freq-Skewness-2</data>
+    </node>
+    <node id="F_22">
+      <data key="d1">feature</data>
+      <data key="d2">Freq-Kurtosis-2</data>
+    </node>
+    <node id="F_23">
+      <data key="d1">feature</data>
+      <data key="d2">VMD-Energy-1</data>
+    </node>
+    <node id="F_24">
+      <data key="d1">feature</data>
+      <data key="d2">VMD-Energy-2</data>
+    </node>
+    <node id="F_25">
+      <data key="d1">feature</data>
+      <data key="d2">VMD-Energy-3</data>
+    </node>
+    <node id="F_26">
+      <data key="d1">feature</data>
+      <data key="d2">VMD-Energy-4</data>
+    </node>
+    <node id="F_27">
+      <data key="d1">feature</data>
+      <data key="d2">VMD-SVD-1</data>
+    </node>
+    <node id="F_28">
+      <data key="d1">feature</data>
+      <data key="d2">VMD-SVD-2</data>
+    </node>
+    <node id="F_29">
+      <data key="d1">feature</data>
+      <data key="d2">VMD-SVD-3</data>
+    </node>
+    <node id="F_30">
+      <data key="d1">feature</data>
+      <data key="d2">VMD-SVD-4</data>
+    </node>
+    <node id="C_0">
+      <data key="d1">fault</data>
+      <data key="d2">Normal</data>
+    </node>
+    <node id="C_1">
+      <data key="d1">fault</data>
+      <data key="d2">Inner Race</data>
+    </node>
+    <node id="C_2">
+      <data key="d1">fault</data>
+      <data key="d2">Outer Race</data>
+    </node>
+    <node id="C_3">
+      <data key="d1">fault</data>
+      <data key="d2">Ball</data>
+    </node>
+    <edge source="F_0" target="C_0">
+      <data key="d3">feature_fault</data>
+      <data key="d4">0.004480634424293116</data>
+    </edge>
+    <edge source="F_0" target="C_1">
+      <data key="d3">feature_fault</data>
+      <data key="d4">0.01632835061975635</data>
+    </edge>
+    <edge source="F_0" target="C_2">
+      <data key="d3">feature_fault</data>
+      <data key="d4">0.01531082165520504</data>
+    </edge>
+    <edge source="F_0" target="C_3">
+      <data key="d3">feature_fault</data>
+      <data key="d4">0.006509644239942406</data>
+    </edge>
+    <edge source="F_1" target="C_0">
+      <data key="d3">feature_fault</data>
+      <data key="d4">0.0354792385714675</data>
+    </edge>
+    <edge source="F_1" target="C_1">
+      <data key="d3">feature_fault</data>
+      <data key="d4">0.011639529692452927</data>
+    </edge>
+    <edge source="F_1" target="C_2">
+      <data key="d3">feature_fault</data>
+      <data key="d4">0.02831105869649916</data>
+    </edge>
+    <edge source="F_1" target="C_3">
+      <data key="d3">feature_fault</data>
+      <data key="d4">0.029033994846699752</data>
+    </edge>
+    <edge source="F_2" target="C_0">
+      <data key="d3">feature_fault</data>
+      <data key="d4">0.02049783553054558</data>
+    </edge>
+    <edge source="F_2" target="C_1">
+      <data key="d3">feature_fault</data>
+      <data key="d4">0.010375272277297528</data>
+    </edge>
+    <edge source="F_2" target="C_2">
+      <data key="d3">feature_fault</data>
+      <data key="d4">0.013982940139622733</data>
+    </edge>
+    <edge source="F_2" target="C_3">
+      <data key="d3">feature_fault</data>
+      <data key="d4">0.019568353983723002</data>
+    </edge>
+    <edge source="F_3" target="C_0">
+      <data key="d3">feature_fault</data>
+      <data key="d4">0.0359670570266487</data>
+    </edge>
+    <edge source="F_3" target="C_1">
+      <data key="d3">feature_fault</data>
+      <data key="d4">0.011630243319271365</data>
+    </edge>
+    <edge source="F_3" target="C_2">
+      <data key="d3">feature_fault</data>
+      <data key="d4">0.028239832320510975</data>
+    </edge>
+    <edge source="F_3" target="C_3">
+      <data key="d3">feature_fault</data>
+      <data key="d4">0.029027711167115437</data>
+    </edge>
+    <edge source="F_4" target="C_0">
+      <data key="d3">feature_fault</data>
+      <data key="d4">0.05892091742657144</data>
+    </edge>
+    <edge source="F_4" target="C_1">
+      <data key="d3">feature_fault</data>
+      <data key="d4">0.013912720863147389</data>
+    </edge>
+    <edge source="F_4" target="C_2">
+      <data key="d3">feature_fault</data>
+      <data key="d4">0.012331680649035606</data>
+    </edge>
+    <edge source="F_4" target="C_3">
+      <data key="d3">feature_fault</data>
+      <data key="d4">0.03391147957903737</data>
+    </edge>
+    <edge source="F_5" target="C_0">
+      <data key="d3">feature_fault</data>
+      <data key="d4">0.0024992504775915633</data>
+    </edge>
+    <edge source="F_5" target="C_1">
+      <data key="d3">feature_fault</data>
+      <data key="d4">0.014052032441060186</data>
+    </edge>
+    <edge source="F_5" target="C_2">
+      <data key="d3">feature_fault</data>
+      <data key="d4">0.016808931573828168</data>
+    </edge>
+    <edge source="F_5" target="C_3">
+      <data key="d3">feature_fault</data>
+      <data key="d4">0.02201368698838032</data>
+    </edge>
+    <edge source="F_6" target="C_0">
+      <data key="d3">feature_fault</data>
+      <data key="d4">0.03852421795449766</data>
+    </edge>
+    <edge source="F_6" target="C_1">
+      <data key="d3">feature_fault</data>
+      <data key="d4">0.037010321476170394</data>
+    </edge>
+    <edge source="F_6" target="C_2">
+      <data key="d3">feature_fault</data>
+      <data key="d4">0.0096548006876562</data>
+    </edge>
+    <edge source="F_6" target="C_3">
+      <data key="d3">feature_fault</data>
+      <data key="d4">0.026397081891121554</data>
+    </edge>
+    <edge source="F_7" target="C_0">
+      <data key="d3">feature_fault</data>
+      <data key="d4">0.005765658967948299</data>
+    </edge>
+    <edge source="F_7" target="C_1">
+      <data key="d3">feature_fault</data>
+      <data key="d4">0.01860298178104209</data>
+    </edge>
+    <edge source="F_7" target="C_2">
+      <data key="d3">feature_fault</data>
+      <data key="d4">0.009203842840368187</data>
+    </edge>
+    <edge source="F_7" target="C_3">
+      <data key="d3">feature_fault</data>
+      <data key="d4">0.010573834455622044</data>
+    </edge>
+    <edge source="F_8" target="C_0">
+      <data key="d3">feature_fault</data>
+      <data key="d4">0.015266996449543506</data>
+    </edge>
+    <edge source="F_8" target="C_1">
+      <data key="d3">feature_fault</data>
+      <data key="d4">0.03164207305148199</data>
+    </edge>
+    <edge source="F_8" target="C_2">
+      <data key="d3">feature_fault</data>
+      <data key="d4">0.008897893083763217</data>
+    </edge>
+    <edge source="F_8" target="C_3">
+      <data key="d3">feature_fault</data>
+      <data key="d4">0.02156700048123844</data>
+    </edge>
+    <edge source="F_9" target="C_0">
+      <data key="d3">feature_fault</data>
+      <data key="d4">0.02348664685529437</data>
+    </edge>
+    <edge source="F_9" target="C_1">
+      <data key="d3">feature_fault</data>
+      <data key="d4">0.038986941666581676</data>
+    </edge>
+    <edge source="F_9" target="C_2">
+      <data key="d3">feature_fault</data>
+      <data key="d4">0.011571561222583704</data>
+    </edge>
+    <edge source="F_9" target="C_3">
+      <data key="d3">feature_fault</data>
+      <data key="d4">0.02785382178743226</data>
+    </edge>
+    <edge source="F_10" target="C_0">
+      <data key="d3">feature_fault</data>
+      <data key="d4">0.010846363517857917</data>
+    </edge>
+    <edge source="F_10" target="C_1">
+      <data key="d3">feature_fault</data>
+      <data key="d4">0.026232158793596517</data>
+    </edge>
+    <edge source="F_10" target="C_2">
+      <data key="d3">feature_fault</data>
+      <data key="d4">0.008798561294835826</data>
+    </edge>
+    <edge source="F_10" target="C_3">
+      <data key="d3">feature_fault</data>
+      <data key="d4">0.016573680850621567</data>
+    </edge>
+    <edge source="F_11" target="C_0">
+      <data key="d3">feature_fault</data>
+      <data key="d4">0.08007190983527565</data>
+    </edge>
+    <edge source="F_11" target="C_1">
+      <data key="d3">feature_fault</data>
+      <data key="d4">0.017960723460586876</data>
+    </edge>
+    <edge source="F_11" target="C_2">
+      <data key="d3">feature_fault</data>
+      <data key="d4">0.03067672415707441</data>
+    </edge>
+    <edge source="F_11" target="C_3">
+      <data key="d3">feature_fault</data>
+      <data key="d4">0.030776345861439965</data>
+    </edge>
+    <edge source="F_12" target="C_0">
+      <data key="d3">feature_fault</data>
+      <data key="d4">0.1696198521952823</data>
+    </edge>
+    <edge source="F_12" target="C_1">
+      <data key="d3">feature_fault</data>
+      <data key="d4">0.011036590556761922</data>
+    </edge>
+    <edge source="F_12" target="C_2">
+      <data key="d3">feature_fault</data>
+      <data key="d4">0.017281863584748248</data>
+    </edge>
+    <edge source="F_12" target="C_3">
+      <data key="d3">feature_fault</data>
+      <data key="d4">0.07990058273753542</data>
+    </edge>
+    <edge source="F_13" target="C_0">
+      <data key="d3">feature_fault</data>
+      <data key="d4">0.0014545878822702606</data>
+    </edge>
+    <edge source="F_13" target="C_1">
+      <data key="d3">feature_fault</data>
+      <data key="d4">0.021111979626302995</data>
+    </edge>
+    <edge source="F_13" target="C_2">
+      <data key="d3">feature_fault</data>
+      <data key="d4">0.02055009462075451</data>
+    </edge>
+    <edge source="F_13" target="C_3">
+      <data key="d3">feature_fault</data>
+      <data key="d4">0.007918345590378163</data>
+    </edge>
+    <edge source="F_14" target="C_0">
+      <data key="d3">feature_fault</data>
+      <data key="d4">0.0011210209009881178</data>
+    </edge>
+    <edge source="F_14" target="C_1">
+      <data key="d3">feature_fault</data>
+      <data key="d4">0.026738344113867888</data>
+    </edge>
+    <edge source="F_14" target="C_2">
+      <data key="d3">feature_fault</data>
+      <data key="d4">0.03144234701291394</data>
+    </edge>
+    <edge source="F_14" target="C_3">
+      <data key="d3">feature_fault</data>
+      <data key="d4">0.00824974208257407</data>
+    </edge>
+    <edge source="F_15" target="C_0">
+      <data key="d3">feature_fault</data>
+      <data key="d4">0.016119934994883255</data>
+    </edge>
+    <edge source="F_15" target="C_1">
+      <data key="d3">feature_fault</data>
+      <data key="d4">0.12390560241361948</data>
+    </edge>
+    <edge source="F_15" target="C_2">
+      <data key="d3">feature_fault</data>
+      <data key="d4">0.026494499278672947</data>
+    </edge>
+    <edge source="F_15" target="C_3">
+      <data key="d3">feature_fault</data>
+      <data key="d4">0.027232303172398987</data>
+    </edge>
+    <edge source="F_16" target="C_0">
+      <data key="d3">feature_fault</data>
+      <data key="d4">0.009689401968180833</data>
+    </edge>
+    <edge source="F_16" target="C_1">
+      <data key="d3">feature_fault</data>
+      <data key="d4">0.06042377483379861</data>
+    </edge>
+    <edge source="F_16" target="C_2">
+      <data key="d3">feature_fault</data>
+      <data key="d4">0.027710875571492547</data>
+    </edge>
+    <edge source="F_16" target="C_3">
+      <data key="d3">feature_fault</data>
+      <data key="d4">0.02630142550018425</data>
+    </edge>
+    <edge source="F_17" target="C_0">
+      <data key="d3">feature_fault</data>
+      <data key="d4">0.01927696659864277</data>
+    </edge>
+    <edge source="F_17" target="C_1">
+      <data key="d3">feature_fault</data>
+      <data key="d4">0.03531472019143454</data>
+    </edge>
+    <edge source="F_17" target="C_2">
+      <data key="d3">feature_fault</data>
+      <data key="d4">0.02470529805658421</data>
+    </edge>
+    <edge source="F_17" target="C_3">
+      <data key="d3">feature_fault</data>
+      <data key="d4">0.028639989058353913</data>
+    </edge>
+    <edge source="F_18" target="C_0">
+      <data key="d3">feature_fault</data>
+      <data key="d4">0.001498294354798447</data>
+    </edge>
+    <edge source="F_18" target="C_1">
+      <data key="d3">feature_fault</data>
+      <data key="d4">0.008264892659814426</data>
+    </edge>
+    <edge source="F_18" target="C_2">
+      <data key="d3">feature_fault</data>
+      <data key="d4">0.012742279141618719</data>
+    </edge>
+    <edge source="F_18" target="C_3">
+      <data key="d3">feature_fault</data>
+      <data key="d4">0.004409521710806405</data>
+    </edge>
+    <edge source="F_19" target="C_0">
+      <data key="d3">feature_fault</data>
+      <data key="d4">0.005023136326111795</data>
+    </edge>
+    <edge source="F_19" target="C_1">
+      <data key="d3">feature_fault</data>
+      <data key="d4">0.06739875468098727</data>
+    </edge>
+    <edge source="F_19" target="C_2">
+      <data key="d3">feature_fault</data>
+      <data key="d4">0.16356285546221075</data>
+    </edge>
+    <edge source="F_19" target="C_3">
+      <data key="d3">feature_fault</data>
+      <data key="d4">0.023142489655367245</data>
+    </edge>
+    <edge source="F_20" target="C_0">
+      <data key="d3">feature_fault</data>
+      <data key="d4">0.007560041971448943</data>
+    </edge>
+    <edge source="F_20" target="C_1">
+      <data key="d3">feature_fault</data>
+      <data key="d4">0.02507425883048537</data>
+    </edge>
+    <edge source="F_20" target="C_2">
+      <data key="d3">feature_fault</data>
+      <data key="d4">0.01207586440404529</data>
+    </edge>
+    <edge source="F_20" target="C_3">
+      <data key="d3">feature_fault</data>
+      <data key="d4">0.020707327202973465</data>
+    </edge>
+    <edge source="F_21" target="C_0">
+      <data key="d3">feature_fault</data>
+      <data key="d4">0.006294746364577958</data>
+    </edge>
+    <edge source="F_21" target="C_1">
+      <data key="d3">feature_fault</data>
+      <data key="d4">0.06833673217949454</data>
+    </edge>
+    <edge source="F_21" target="C_2">
+      <data key="d3">feature_fault</data>
+      <data key="d4">0.17182860390131854</data>
+    </edge>
+    <edge source="F_21" target="C_3">
+      <data key="d3">feature_fault</data>
+      <data key="d4">0.01694600143748402</data>
+    </edge>
+    <edge source="F_22" target="C_0">
+      <data key="d3">feature_fault</data>
+      <data key="d4">0.004304569780391798</data>
+    </edge>
+    <edge source="F_22" target="C_1">
+      <data key="d3">feature_fault</data>
+      <data key="d4">0.18804582206917209</data>
+    </edge>
+    <edge source="F_22" target="C_2">
+      <data key="d3">feature_fault</data>
+      <data key="d4">0.17836564986574407</data>
+    </edge>
+    <edge source="F_22" target="C_3">
+      <data key="d3">feature_fault</data>
+      <data key="d4">0.060376227674692945</data>
+    </edge>
+    <edge source="F_23" target="C_0">
+      <data key="d3">feature_fault</data>
+      <data key="d4">0.017890151053810047</data>
+    </edge>
+    <edge source="F_23" target="C_1">
+      <data key="d3">feature_fault</data>
+      <data key="d4">0.013200537752060955</data>
+    </edge>
+    <edge source="F_23" target="C_2">
+      <data key="d3">feature_fault</data>
+      <data key="d4">0.0073084568489770255</data>
+    </edge>
+    <edge source="F_23" target="C_3">
+      <data key="d3">feature_fault</data>
+      <data key="d4">0.1521624728664872</data>
+    </edge>
+    <edge source="F_24" target="C_0">
+      <data key="d3">feature_fault</data>
+      <data key="d4">0.024239955854863438</data>
+    </edge>
+    <edge source="F_24" target="C_1">
+      <data key="d3">feature_fault</data>
+      <data key="d4">0.01323486062366432</data>
+    </edge>
+    <edge source="F_24" target="C_2">
+      <data key="d3">feature_fault</data>
+      <data key="d4">0.006591707362405942</data>
+    </edge>
+    <edge source="F_24" target="C_3">
+      <data key="d3">feature_fault</data>
+      <data key="d4">0.09193002319867363</data>
+    </edge>
+    <edge source="F_25" target="C_0">
+      <data key="d3">feature_fault</data>
+      <data key="d4">0.14993697861836353</data>
+    </edge>
+    <edge source="F_25" target="C_1">
+      <data key="d3">feature_fault</data>
+      <data key="d4">0.00855762880455082</data>
+    </edge>
+    <edge source="F_25" target="C_2">
+      <data key="d3">feature_fault</data>
+      <data key="d4">0.012766191766703364</data>
+    </edge>
+    <edge source="F_25" target="C_3">
+      <data key="d3">feature_fault</data>
+      <data key="d4">0.03318538011065265</data>
+    </edge>
+    <edge source="F_26" target="C_0">
+      <data key="d3">feature_fault</data>
+      <data key="d4">0.18144963764493383</data>
+    </edge>
+    <edge source="F_26" target="C_1">
+      <data key="d3">feature_fault</data>
+      <data key="d4">0.028721010999469568</data>
+    </edge>
+    <edge source="F_26" target="C_2">
+      <data key="d3">feature_fault</data>
+      <data key="d4">0.011949024800350493</data>
+    </edge>
+    <edge source="F_26" target="C_3">
+      <data key="d3">feature_fault</data>
+      <data key="d4">0.04342146470848109</data>
+    </edge>
+    <edge source="F_27" target="C_0">
+      <data key="d3">feature_fault</data>
+      <data key="d4">0.01242672642440239</data>
+    </edge>
+    <edge source="F_27" target="C_1">
+      <data key="d3">feature_fault</data>
+      <data key="d4">0.011336965248334411</data>
+    </edge>
+    <edge source="F_27" target="C_2">
+      <data key="d3">feature_fault</data>
+      <data key="d4">0.03274311671630559</data>
+    </edge>
+    <edge source="F_27" target="C_3">
+      <data key="d3">feature_fault</data>
+      <data key="d4">0.0232709181492138</data>
+    </edge>
+    <edge source="F_28" target="C_0">
+      <data key="d3">feature_fault</data>
+      <data key="d4">0.022316842098901064</data>
+    </edge>
+    <edge source="F_28" target="C_1">
+      <data key="d3">feature_fault</data>
+      <data key="d4">0.015630013491024487</data>
+    </edge>
+    <edge source="F_28" target="C_2">
+      <data key="d3">feature_fault</data>
+      <data key="d4">0.025372059250504345</data>
+    </edge>
+    <edge source="F_28" target="C_3">
+      <data key="d3">feature_fault</data>
+      <data key="d4">0.022718236332027904</data>
+    </edge>
+    <edge source="F_29" target="C_0">
+      <data key="d3">feature_fault</data>
+      <data key="d4">0.013138569726649358</data>
+    </edge>
+    <edge source="F_29" target="C_1">
+      <data key="d3">feature_fault</data>
+      <data key="d4">0.011090318699579542</data>
+    </edge>
+    <edge source="F_29" target="C_2">
+      <data key="d3">feature_fault</data>
+      <data key="d4">0.010750514526540625</data>
+    </edge>
+    <edge source="F_29" target="C_3">
+      <data key="d3">feature_fault</data>
+      <data key="d4">0.030356289394852524</data>
+    </edge>
+    <edge source="F_30" target="C_0">
+      <data key="d3">feature_fault</data>
+      <data key="d4">0.004831858202964713</data>
+    </edge>
+    <edge source="F_30" target="C_1">
+      <data key="d3">feature_fault</data>
+      <data key="d4">0.014203842783131526</data>
+    </edge>
+    <edge source="F_30" target="C_2">
+      <data key="d3">feature_fault</data>
+      <data key="d4">0.011970049507125517</data>
+    </edge>
+    <edge source="F_30" target="C_3">
+      <data key="d3">feature_fault</data>
+      <data key="d4">0.02532462328448825</data>
+    </edge>
+    <edge source="C_0" target="C_0">
+      <data key="d3">fault_transition</data>
+      <data key="d5">0.9970089730807581</data>
+    </edge>
+    <edge source="C_0" target="C_1">
+      <data key="d3">fault_transition</data>
+      <data key="d5">0.000997008973080758</data>
+    </edge>
+    <edge source="C_0" target="C_2">
+      <data key="d3">fault_transition</data>
+      <data key="d5">0.000997008973080758</data>
+    </edge>
+    <edge source="C_0" target="C_3">
+      <data key="d3">fault_transition</data>
+      <data key="d5">0.000997008973080758</data>
+    </edge>
+    <edge source="C_1" target="C_0">
+      <data key="d3">fault_transition</data>
+      <data key="d5">0.000997008973080758</data>
+    </edge>
+    <edge source="C_1" target="C_1">
+      <data key="d3">fault_transition</data>
+      <data key="d5">0.9970089730807581</data>
+    </edge>
+    <edge source="C_1" target="C_2">
+      <data key="d3">fault_transition</data>
+      <data key="d5">0.000997008973080758</data>
+    </edge>
+    <edge source="C_1" target="C_3">
+      <data key="d3">fault_transition</data>
+      <data key="d5">0.000997008973080758</data>
+    </edge>
+    <edge source="C_2" target="C_0">
+      <data key="d3">fault_transition</data>
+      <data key="d5">0.0009970089730807579</data>
+    </edge>
+    <edge source="C_2" target="C_1">
+      <data key="d3">fault_transition</data>
+      <data key="d5">0.0009970089730807579</data>
+    </edge>
+    <edge source="C_2" target="C_2">
+      <data key="d3">fault_transition</data>
+      <data key="d5">0.9970089730807579</data>
+    </edge>
+    <edge source="C_2" target="C_3">
+      <data key="d3">fault_transition</data>
+      <data key="d5">0.0009970089730807579</data>
+    </edge>
+    <edge source="C_3" target="C_0">
+      <data key="d3">fault_transition</data>
+      <data key="d5">0.0009970089730807579</data>
+    </edge>
+    <edge source="C_3" target="C_1">
+      <data key="d3">fault_transition</data>
+      <data key="d5">0.0009970089730807579</data>
+    </edge>
+    <edge source="C_3" target="C_2">
+      <data key="d3">fault_transition</data>
+      <data key="d5">0.0009970089730807579</data>
+    </edge>
+    <edge source="C_3" target="C_3">
+      <data key="d3">fault_transition</data>
+      <data key="d5">0.9970089730807579</data>
+    </edge>
+    <data key="d0">bearing_KG</data>
+  </graph>
+</graphml>
