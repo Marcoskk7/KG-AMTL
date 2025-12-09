@@ -14,18 +14,19 @@ Knowledge-Guided Meta-Transfer Learning (KG-AMTL) 训练模块。
     3) 使用 `models.gan_training.compute_feature_fault_weights` 或已有 KG 文件
        获取特征-故障相关矩阵 W_real；
     4) 构建包含「动态特征加权层」的分类网络；
-    5) 按 Reptile 风格的元学习循环，基于 N-way K-shot 任务训练一个
-       具有快速适应能力的初始化参数 θ*；
+    5) 按论文 3.3 / 6.3 节描述的 **二阶 MAML** 元学习循环，基于 N-way K-shot 任务
+       训练一个具有快速适应能力的初始化参数 θ*；
     6) 将训练好的模型与 KG 先验一并保存到 checkpoint。
 
 注意：
-    - 这里采用 Reptile 风格的简单元学习更新（参数插值），工程上更稳定，
-      也更易于与现有代码集成；若后续需要，可以替换为完整的 MAML。
+    - 当前实现为完整的二阶 MAML：在内循环更新 θ_i′ 时保留计算图，并在外循环
+      对查询集元损失反向传播到初始参数 θ，从而显式包含二阶梯度项。
 """
 
 import os
+from collections import OrderedDict
 from dataclasses import asdict, dataclass
-from typing import Dict, List, Tuple
+from typing import Dict, List, Mapping, Tuple
 
 import numpy as np
 import torch
@@ -68,13 +69,13 @@ class MetaTransferConfig:
     num_ways: int = 4  # N-way
     k_shot: int = 5  # 每类支持集样本数
     q_query: int = 15  # 每类查询集样本数
-    inner_steps: int = 1  # 内循环梯度步数（Reptile 中通常较小）
-    inner_lr: float = 1e-2  # 内循环学习率
-    meta_lr: float = 1e-3  # 外循环（Reptile 插值）学习率
+    inner_steps: int = 1  # 内循环梯度步数（MAML 内循环）
+    inner_lr: float = 1e-2  # 内循环学习率（与最初版本保持一致）
+    meta_lr: float = 1e-3  # 外循环（元更新）学习率
     num_epochs: int = 200
     tasks_per_epoch: int = 128
 
-    # 是否启用 MMD 分布对齐（默认开启，对齐目标域无标签数据）
+    # 是否启用 MMD 分布对齐
     use_mmd: bool = False
     mmd_lambda: float = 0.1
     mmd_gamma: float = 1.0
@@ -147,6 +148,46 @@ class KGMetaClassifier(nn.Module):
             x = self.weighter(x, y)  # [B, D]
         h = self.backbone(x)
         logits = self.classifier(h)
+        return logits, h
+
+    def forward_with_params(
+        self,
+        x: torch.Tensor,
+        y: torch.Tensor | None,
+        params: Mapping[str, torch.Tensor],
+    ) -> Tuple[torch.Tensor, torch.Tensor]:
+        """
+        使用给定的参数字典进行前向传播，用于 MAML 内循环的功能式前向。
+
+        Parameters
+        ----------
+        x : [B, D]
+            输入特征（31 维物理特征）。
+        y : Optional[Tensor]
+            故障类别索引；若为 None，则跳过知识加权层（用于无标签目标域）。
+        params : Dict[str, Tensor]
+            由 `OrderedDict(model.named_parameters())` 得到并经过若干步
+            梯度更新后的参数集合。
+        """
+
+        if y is not None:
+            x = self.weighter(x, y)  # [B, D]
+
+        # backbone 的两层全连接（对应 nn.Sequential 的 0 和 2 层）
+        w1 = params["backbone.0.weight"]
+        b1 = params["backbone.0.bias"]
+        w2 = params["backbone.2.weight"]
+        b2 = params["backbone.2.bias"]
+
+        h = F.linear(x, w1, b1)
+        h = F.relu(h, inplace=False)
+        h = F.linear(h, w2, b2)
+        h = F.relu(h, inplace=False)
+
+        # 分类头
+        w_cls = params["classifier.weight"]
+        b_cls = params["classifier.bias"]
+        logits = F.linear(h, w_cls, b_cls)
         return logits, h
 
 
@@ -263,13 +304,13 @@ def _compute_mmd(
 
 def train_meta_with_kg(config: MetaTransferConfig) -> None:
     """
-    KG 引导元迁移学习主入口。
+    KG 引导元迁移学习主入口（论文要求的二阶 MAML 实现）。
 
     流程：
         1) 加载 CWRU 信号并提取 31 维特征；
         2) 通过 KG 计算 / 加载特征-故障权重矩阵 W_real；
         3) 构建 KGMetaClassifier；
-        4) 基于 Reptile 风格的元学习训练 θ*；
+        4) 基于 N-way K-shot 任务，按 MAML 进行内外循环更新（包含二阶梯度）；
         5) 保存模型与先验到 checkpoint。
     """
 
@@ -279,7 +320,7 @@ def train_meta_with_kg(config: MetaTransferConfig) -> None:
     device = torch.device(config.device)
     print(f"[设备] 使用设备: {device}")
 
-    # ---------- 1. 加载信号 ----------
+    # ---------- 1. 加载源域信号 ----------
     signals_np, labels_np, label_names = load_cwru_signals(
         root_dir=config.root_dir,
         sample_length=config.sample_length,
@@ -342,14 +383,13 @@ def train_meta_with_kg(config: MetaTransferConfig) -> None:
         num_features=num_features, num_classes=num_classes, W_real=W_real
     ).to(device)
 
-    # 将特征和标签缓存到 GPU 以减少数据搬运
+    # 将特征缓存到 GPU 以减少数据搬运
     features = torch.tensor(features_np, dtype=torch.float32, device=device)
-    labels = torch.tensor(labels_np, dtype=torch.long, device=device)
     target_features = torch.tensor(
         target_features_np, dtype=torch.float32, device=device
     )
 
-    # MAML 外循环：基于查询集损失的梯度更新 θ（采用一阶 MAML 近似）
+    # 二阶 MAML 外循环：基于查询集元损失的梯度更新 θ
     meta_optimizer = torch.optim.Adam(model.parameters(), lr=config.meta_lr)
 
     for epoch in range(1, config.num_epochs + 1):
@@ -382,48 +422,52 @@ def train_meta_with_kg(config: MetaTransferConfig) -> None:
             q_x = features[q_idx]
             q_y = torch.tensor(q_y_np, dtype=torch.long, device=device)
 
-            # 为该任务构建一份模型拷贝，并从当前元参数 θ 初始化
-            task_model = KGMetaClassifier(
-                num_features=num_features,
-                num_classes=num_classes,
-                W_real=W_real,
-            ).to(device)
-            task_model.load_state_dict(model.state_dict())
-
-            inner_optimizer = torch.optim.SGD(
-                task_model.parameters(), lr=config.inner_lr
+            # ---------- 内循环：在支持集上执行若干步梯度更新（任务级适应） ----------
+            # 使用功能式前向 + autograd.grad 实现 MAML，可对初始参数 θ 求二阶梯度
+            fast_weights = OrderedDict(
+                (name, param) for name, param in model.named_parameters()
             )
 
-            # ---------- 内循环：在支持集上执行若干步梯度更新（任务级适应） ----------
             for _step in range(config.inner_steps):
-                inner_optimizer.zero_grad()
-                logits_s, feats_s = task_model(s_x, s_y)
+                logits_s, _ = model.forward_with_params(s_x, s_y, fast_weights)
                 loss_task = F.cross_entropy(logits_s, s_y)
 
-                # 可选：在支持集与目标域无标签特征之间加入 MMD 对齐项
-                if config.use_mmd and target_features.size(0) > 0:
-                    t_batch_size = min(feats_s.size(0), target_features.size(0))
-                    idx_t = torch.randint(
-                        0,
-                        target_features.size(0),
-                        (t_batch_size,),
-                        device=device,
-                    )
-                    feats_t = target_features[idx_t]
-                    loss_mmd = _compute_mmd(
-                        feats_s[:t_batch_size],
-                        feats_t,
-                        gamma=config.mmd_gamma,
-                    )
-                    loss_task = loss_task + config.mmd_lambda * loss_mmd
+                grads = torch.autograd.grad(
+                    loss_task,
+                    list(fast_weights.values()),
+                    create_graph=True,
+                )
 
-                loss_task.backward()
-                inner_optimizer.step()
+                fast_weights = OrderedDict(
+                    (
+                        name,
+                        param - config.inner_lr * g,
+                    )
+                    for (name, param), g in zip(fast_weights.items(), grads)
+                )
 
-            # ---------- 外循环：在查询集上计算元损失，并将梯度累积到主模型 ----------
-            task_model.eval()
-            logits_q, _ = task_model(q_x, q_y)
+            # ---------- 外循环：在查询集上计算元损失（含可选 MMD），并对 θ 反向传播 ----------
+            logits_q, feats_q = model.forward_with_params(q_x, q_y, fast_weights)
             loss_meta = F.cross_entropy(logits_q, q_y)
+
+            # 可选：在查询集与目标域无标签特征之间加入 MMD 对齐项（与论文元目标一致）
+            if config.use_mmd and target_features.size(0) > 0:
+                t_batch_size = min(feats_q.size(0), target_features.size(0))
+                idx_t = torch.randint(
+                    0,
+                    target_features.size(0),
+                    (t_batch_size,),
+                    device=device,
+                )
+                t_x = target_features[idx_t]
+                # 目标域无标签样本只经过特征提取器 φ(·; θ_i′)
+                _, feats_t = model.forward_with_params(t_x, None, fast_weights)
+                loss_mmd = _compute_mmd(
+                    feats_q[:t_batch_size],
+                    feats_t,
+                    gamma=config.mmd_gamma,
+                )
+                loss_meta = loss_meta + config.mmd_lambda * loss_mmd
 
             # 记录查询集精度（仅用于日志）
             with torch.no_grad():
@@ -432,16 +476,8 @@ def train_meta_with_kg(config: MetaTransferConfig) -> None:
                 acc_sum += acc
                 acc_count += 1
 
-            # 一阶 MAML：使用任务模型在查询集上的梯度，近似更新元参数 θ
+            # 二阶 MAML：loss_meta 对 θ 的梯度中自然包含内循环更新的二阶项
             loss_meta.backward()
-            for p_main, p_task in zip(model.parameters(), task_model.parameters()):
-                if p_task.grad is None:
-                    continue
-                if p_main.grad is None:
-                    p_main.grad = p_task.grad.detach().clone()
-                else:
-                    p_main.grad += p_task.grad.detach()
-
             task_count += 1
 
         if task_count == 0:
@@ -472,6 +508,8 @@ def train_meta_with_kg(config: MetaTransferConfig) -> None:
         "W_real": W_real,
         "num_features": num_features,
         "num_classes": num_classes,
+        # 保存在源域特征上拟合的 MinMaxScaler，便于目标域特征使用相同缩放规则
+        "scaler": scaler,
     }
     torch.save(ckpt, config.ckpt_path)
     print(f"[保存] KG-AMTL 元学习模型已保存到: {config.ckpt_path}")
