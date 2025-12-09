@@ -28,7 +28,7 @@ def main() -> None:
 
     # 延迟导入，避免静态检查器对「非顶部导入」报警
     from models.gan_training import GANTrainConfig, train_gan_with_physics
-    # from models.meta_transfer import MetaTransferConfig, train_meta_with_kg
+    from models.meta_transfer import MetaTransferConfig, train_meta_with_kg
 
     parser = argparse.ArgumentParser(
         description=(
@@ -73,11 +73,10 @@ def main() -> None:
 
     # ---------- 2.3: KG 引导元迁移学习 ----------
     if not args.skip_meta:
-        # print("\n=== 运行 2.3: Knowledge-Guided Meta-Transfer Learning ===")
-        # meta_cfg = MetaTransferConfig()
-        # meta_cfg.root_dir = root_dir
-        # train_meta_with_kg(meta_cfg)
-        print("11")
+        print("\n=== 运行 2.3: Knowledge-Guided Meta-Transfer Learning ===")
+        meta_cfg = MetaTransferConfig()
+        meta_cfg.root_dir = root_dir
+        train_meta_with_kg(meta_cfg)
     else:
         print("\n[跳过] 2.3 元迁移学习训练（根据 --skip_meta 参数）")
 

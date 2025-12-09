@@ -3,14 +3,42 @@ from __future__ import annotations
 import os
 from typing import List
 
-import matplotlib.pyplot as plt
 import matplotlib.font_manager as fm
+import matplotlib.pyplot as plt
 import numpy as np
+from matplotlib import cm
 from matplotlib.lines import Line2D
 from sklearn.manifold import TSNE
 from sklearn.preprocessing import StandardScaler
 
 from features.time_freq_vmd import VMD_FEATURE_NAMES
+
+
+def _limit_samples_per_class(
+    feats: np.ndarray,
+    labels: np.ndarray,
+    limit: int | None,
+) -> tuple[np.ndarray, np.ndarray]:
+    """每个类别最多保留 ``limit`` 条样本，用于加速可视化。"""
+
+    if limit is None or limit <= 0:
+        return feats, labels
+
+    feats = np.asarray(feats)
+    labels = np.asarray(labels)
+
+    keep_indices: list[np.ndarray] = []
+    for cls in np.unique(labels):
+        cls_idx = np.where(labels == cls)[0]
+        if cls_idx.size > limit:
+            cls_idx = cls_idx[:limit]
+        keep_indices.append(cls_idx)
+
+    if not keep_indices:
+        return feats[:0], labels[:0]
+
+    gathered = np.concatenate(keep_indices)
+    return feats[gathered], labels[gathered]
 
 
 def setup_chinese_font() -> str | None:
@@ -60,10 +88,10 @@ def plot_time_series_compare(
 
     for i in range(num_to_plot):
         axes[i, 0].plot(t, real_signals[i], color="tab:blue")
-        axes[i, 0].set_title(f"真实样本 {i+1}")
+        axes[i, 0].set_title(f"真实样本 {i + 1}")
 
         axes[i, 1].plot(t, fake_signals[i], color="tab:orange")
-        axes[i, 1].set_title(f"生成样本 {i+1}")
+        axes[i, 1].set_title(f"生成样本 {i + 1}")
 
     fig.suptitle(f"类别 {class_name} 的时域波形对比")
     for ax in axes[-1, :]:
@@ -143,6 +171,7 @@ def tsne_and_plot_ax(
     title: str,
     ax,
     class_names: List[str],
+    num_per_class: int | None = None,
 ) -> None:
     """
     在 ax（子图）上绘制 t-SNE 结果。
@@ -152,6 +181,18 @@ def tsne_and_plot_ax(
     if feat_real.size == 0 or feat_fake.size == 0:
         print(f"[警告] tsne_and_plot_ax({title}): 输入特征为空，跳过绘图")
         return
+
+    feat_real, y_real = _limit_samples_per_class(feat_real, y_real, num_per_class)
+    feat_fake, y_fake = _limit_samples_per_class(feat_fake, y_fake, num_per_class)
+
+    if feat_real.size == 0 or feat_fake.size == 0:
+        print(f"[警告] tsne_and_plot_ax({title}): 裁剪后样本为空，跳过绘图")
+        return
+
+    if num_per_class is not None and num_per_class > 0:
+        print(
+            f"[采样] tsne_and_plot_ax({title}): 每类最多 {num_per_class} 条 real/fake 样本参与 t-SNE"
+        )
 
     X_feat_all = np.vstack([feat_real, feat_fake])
     domain_labels = np.concatenate(
@@ -178,7 +219,8 @@ def tsne_and_plot_ax(
     print(f"[t-SNE] {title} 完成:", X_emb.shape)
 
     C = len(class_names)
-    colors = plt.cm.tab10(np.linspace(0, 1, C))
+    cmap = cm.get_cmap("tab10")
+    colors = cmap(np.linspace(0, 1, C))
 
     for c in range(C):
         mask_real_c = (class_labels == c) & (domain_labels == 0)
@@ -268,4 +310,3 @@ __all__ = [
     "plot_vmd_energy_compare",
     "tsne_and_plot_ax",
 ]
-

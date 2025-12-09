@@ -31,14 +31,18 @@ import torch
 
 from data.cwru_loader import CATEGORY_ORDER, load_cwru_signals
 from features.pipeline import FULL_FEATURE_NAMES, batch_extract_features
-from models.pcgan import PCG_Trainer, CondGenerator1D, PCGANGeneratorConfig, ConditionProvider
+from models.pcgan import (
+    CondGenerator1D,
+    ConditionProvider,
+    PCG_Trainer,
+    PCGANGeneratorConfig,
+)
 from utils.visualization import (
-    setup_chinese_font,
     plot_time_series_compare,
     plot_vmd_energy_compare,
+    setup_chinese_font,
     tsne_and_plot_ax,
 )
-
 
 # 与 notebook 中一致的中间结果保存目录（可选，用于调试/可视化）
 KG_SAVE_DIR = "./knowledge_graphs"
@@ -143,9 +147,9 @@ class GANTrainConfig:
     # 是否使用 cwru_samples_record.json 固定裁剪起点，保证多次运行完全一致
     use_record: bool = True
 
-    # 训练（对齐 notebook：batch_size=64, epochs=50, lr_g=2e-4, lr_d=1e-4）
+    # 训练（对齐 notebook：batch_size=64, epochs=500, lr_g=2e-4, lr_d=1e-4）
     batch_size: int = 64
-    num_epochs: int = 50
+    num_epochs: int = 500
     lr_g: float = 2e-4
     lr_d: float = 1e-4
     z_dim: int = 128
@@ -305,7 +309,9 @@ def train_gan_with_physics(config: GANTrainConfig) -> None:
         y_fake_list: List[np.ndarray] = []
         for cls_idx in range(C):
             z = torch.randn(num_per_class_vis, gen_cfg.z_dim, device=device)
-            y_cls = torch.full((num_per_class_vis,), cls_idx, dtype=torch.long, device=device)
+            y_cls = torch.full(
+                (num_per_class_vis,), cls_idx, dtype=torch.long, device=device
+            )
             condG_np = cond_provider.get_cond_vectors_G(y_cls.cpu().numpy())
             condG = torch.tensor(condG_np, dtype=torch.float32, device=device)
             with torch.no_grad():
@@ -328,8 +334,8 @@ def train_gan_with_physics(config: GANTrainConfig) -> None:
         t_real, f_real, v_real, all_real = [], [], [], []
         t_fake, f_fake, v_fake, all_fake = [], [], [], []
 
-        from features.time_domain import extract_time_domain_features
         from features.freq_domain import extract_frequency_domain_features
+        from features.time_domain import extract_time_domain_features
         from features.time_freq_vmd import extract_vmd_features
 
         for sig in X_real_scaled:
@@ -362,28 +368,66 @@ def train_gan_with_physics(config: GANTrainConfig) -> None:
         v_fake = np.asarray(v_fake, dtype=np.float32)
         all_fake = np.asarray(all_fake, dtype=np.float32)
 
-        print("[可视化] 特征维度检查:",
-              "time", t_real.shape, t_fake.shape,
-              "freq", f_real.shape, f_fake.shape,
-              "vmd", v_real.shape, v_fake.shape,
-              "all", all_real.shape, all_fake.shape)
+        print(
+            "[可视化] 特征维度检查:",
+            "time",
+            t_real.shape,
+            t_fake.shape,
+            "freq",
+            f_real.shape,
+            f_fake.shape,
+            "vmd",
+            v_real.shape,
+            v_fake.shape,
+            "all",
+            all_real.shape,
+            all_fake.shape,
+        )
 
         fig, axes = plt.subplots(2, 2, figsize=(14, 10))
         tsne_and_plot_ax(
-            t_real, t_fake, y_real_sub, y_fake, "TIME (11-D)", axes[0, 0], label_names
+            t_real,
+            t_fake,
+            y_real_sub,
+            y_fake,
+            "TIME (11-D)",
+            axes[0, 0],
+            label_names,
+            num_per_class_vis,
         )
         tsne_and_plot_ax(
-            f_real, f_fake, y_real_sub, y_fake, "FREQ (12-D)", axes[0, 1], label_names
+            f_real,
+            f_fake,
+            y_real_sub,
+            y_fake,
+            "FREQ (12-D)",
+            axes[0, 1],
+            label_names,
+            num_per_class_vis,
         )
         tsne_and_plot_ax(
-            v_real, v_fake, y_real_sub, y_fake, "VMD (8-D)", axes[1, 0], label_names
+            v_real,
+            v_fake,
+            y_real_sub,
+            y_fake,
+            "VMD (8-D)",
+            axes[1, 0],
+            label_names,
+            num_per_class_vis,
         )
         tsne_and_plot_ax(
-            all_real, all_fake, y_real_sub, y_fake, "ALL (31-D)", axes[1, 1], label_names
+            all_real,
+            all_fake,
+            y_real_sub,
+            y_fake,
+            "ALL (31-D)",
+            axes[1, 1],
+            label_names,
+            num_per_class_vis,
         )
 
         plt.tight_layout()
-        vis_dir = os.path.join("tests", "gan_plots")
+        vis_dir = os.path.join("results", "gan_plots")
         os.makedirs(vis_dir, exist_ok=True)
         tsne_path = os.path.join(vis_dir, "tsne_features.png")
         plt.savefig(tsne_path, dpi=300, bbox_inches="tight")
@@ -437,8 +481,12 @@ def train_gan_with_physics(config: GANTrainConfig) -> None:
             vis_dir, f"{target_class_name.replace(' ', '_')}_vmd_energy.png"
         )
 
-        plot_time_series_compare(real_signals_cls, fake_signals_cls, target_class_name, waveform_path)
-        plot_vmd_energy_compare(real_feats_cls, fake_feats_cls, energy_indices, target_class_name, vmd_path)
+        plot_time_series_compare(
+            real_signals_cls, fake_signals_cls, target_class_name, waveform_path
+        )
+        plot_vmd_energy_compare(
+            real_feats_cls, fake_feats_cls, energy_indices, target_class_name, vmd_path
+        )
 
         print("[可视化] 训练结束可视化完成。")
     except Exception as e:
@@ -464,5 +512,3 @@ def train_gan_with_physics(config: GANTrainConfig) -> None:
 
 
 __all__ = ["GANTrainConfig", "train_gan_with_physics"]
-
-
