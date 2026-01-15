@@ -52,6 +52,23 @@ def main() -> None:
         action="store_true",
         help="若指定，则跳过 2.3 KG-AMTL 训练，仅运行 2.2 GAN。",
     )
+    parser.add_argument(
+        "--use_gan_aug",
+        action="store_true",
+        help=(
+            "是否在 KG-AMTL 元学习阶段启用 GAN 增强（默认 False）。"
+            "若为 True，则在源域特征上拼接 PC-GAN 生成的合成特征。"
+        ),
+    )
+    parser.add_argument(
+        "--gan_aug_ratio",
+        type=float,
+        default=1.0,
+        help=(
+            "GAN 增强比例：每类生成样本数 ≈ real_num * gan_aug_ratio "
+            "(仅当 --use_gan_aug 时生效，默认 1.0)。"
+        ),
+    )
     args = parser.parse_args()
 
     if args.root_dir is None:
@@ -76,6 +93,8 @@ def main() -> None:
         print("\n=== 运行 2.3: Knowledge-Guided Meta-Transfer Learning ===")
         meta_cfg = MetaTransferConfig()
         meta_cfg.root_dir = root_dir
+        meta_cfg.use_gan_aug = args.use_gan_aug
+        meta_cfg.gan_aug_ratio = args.gan_aug_ratio
         train_meta_with_kg(meta_cfg)
     else:
         print("\n[跳过] 2.3 元迁移学习训练（根据 --skip_meta 参数）")

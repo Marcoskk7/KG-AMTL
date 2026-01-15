@@ -27,6 +27,18 @@ import numpy as np
 import torch
 import torch.nn.functional as F
 
+# 确保项目根目录在 sys.path 中（允许在任意工作目录下直接运行该脚本）
+_current_dir = os.path.dirname(os.path.abspath(__file__))
+_project_root = os.path.dirname(_current_dir)
+if _project_root not in sys.path:
+    sys.path.insert(0, _project_root)
+
+from models.knowledge_init import (
+    compute_target_knowledge_vector,
+    fuse_knowledge_prototypes,
+)
+from models.prototype_init import fuse_prototype_params
+
 
 @dataclass
 class EvalMeta48KConfig:
@@ -46,6 +58,13 @@ class EvalMeta48KConfig:
     inner_steps: int = 3
     inner_lr: float = 1e-3
     num_eval_tasks: int = 200
+
+    # 知识感知初始化 / 原型加权（在每个 few-shot 任务上构造任务特定 W）
+    use_knowledge_aware_init: bool = True
+    ka_lambda: float = 1.0
+
+    # 是否在评估阶段也使用原型级 KG 初始化（与训练阶段保持一致）
+    use_prototype_init: bool = True
 
     # 模型与设备
     ckpt_path: str = os.path.join("models", "checkpoints", "kg_meta_classifier.pt")
@@ -99,6 +118,43 @@ def _sample_task_indices(
     )
 
 
+def _build_task_specific_W_for_eval(
+    W_real: np.ndarray,
+    support_features: np.ndarray,
+    support_labels: np.ndarray,
+    lambda_temp: float,
+    device: torch.device,
+) -> torch.Tensor:
+    """
+    针对 48k 目标域的单个 few-shot 任务，基于支持集构造任务特定的知识矩阵 W_task。
+
+    实现思路与 models.meta_transfer._build_task_specific_W 一致：
+        - 支持集每个类别 c：计算 w_c^{(t)}，再用 W_real 做原型加权得到 w_c^{(fused)}；
+        - 将对应行替换为 w_c^{(fused)}，用于该任务内的动态特征加权。
+    """
+
+    W_task = W_real.copy()
+    unique_labels = np.unique(support_labels)
+
+    for c in unique_labels:
+        c_int = int(c)
+        mask = support_labels == c_int
+        feats_c = support_features[mask]  # [N_c, D]
+        if feats_c.shape[0] < 2:
+            continue
+
+        w_t = compute_target_knowledge_vector(feats_c)
+        w_fused, _ = fuse_knowledge_prototypes(
+            W_source=W_real,
+            w_target=w_t,
+            lambda_temp=lambda_temp,
+        )
+        if 0 <= c_int < W_task.shape[0]:
+            W_task[c_int] = w_fused
+
+    return torch.tensor(W_task, dtype=torch.float32, device=device)
+
+
 def evaluate_meta_on_48k(cfg: EvalMeta48KConfig) -> None:
     # 延迟导入，确保脚本级入口与项目结构解耦
     from data.cwru_loader import (
@@ -106,6 +162,7 @@ def evaluate_meta_on_48k(cfg: EvalMeta48KConfig) -> None:
         load_cwru_signals,
     )
     from features.pipeline import batch_extract_features
+    from models.inception_time import InceptionTimeConfig
     from models.meta_transfer import KGMetaClassifier
 
     device = torch.device(cfg.device)
@@ -125,16 +182,29 @@ def evaluate_meta_on_48k(cfg: EvalMeta48KConfig) -> None:
     num_classes = ckpt["num_classes"]
     W_real = ckpt["W_real"]
     scaler = ckpt.get("scaler", None)
+    prototypes = ckpt.get("prototypes", None)
+    backbone_info = ckpt.get("backbone", {})
 
     print(
         f"[Checkpoint] 加载 θ* 自 {cfg.ckpt_path} | "
         f"num_features={num_features}, num_classes={num_classes}"
     )
 
+    backbone_cfg = InceptionTimeConfig(
+        in_channels=1,
+        num_blocks=backbone_info.get("inception_num_blocks", 3),
+        out_channels=backbone_info.get("inception_out_channels", 32),
+        bottleneck_channels=backbone_info.get("inception_bottleneck_channels", 32),
+        kernel_sizes=backbone_info.get("inception_kernel_sizes", (41, 21, 11)),
+        use_residual=backbone_info.get("inception_use_residual", True),
+        dropout=backbone_info.get("inception_dropout", 0.1),
+    )
     model = KGMetaClassifier(
         num_features=num_features,
         num_classes=num_classes,
         W_real=W_real,
+        backbone_cfg=backbone_cfg,
+        fusion_dropout=backbone_info.get("fusion_dropout", 0.1),
     ).to(device)
     model.load_state_dict(ckpt["model_state_dict"])
     model.eval()
@@ -168,6 +238,7 @@ def evaluate_meta_on_48k(cfg: EvalMeta48KConfig) -> None:
     )
     print(f"[特征-48k] 特征矩阵形状: {features_np.shape} (预期 31 维)")
 
+    signals = torch.tensor(signals_np, dtype=torch.float32, device=device)
     features = torch.tensor(features_np, dtype=torch.float32, device=device)
 
     # ---------- 3. few-shot 评估：在 48k 目标域上构造多任务 ----------
@@ -195,19 +266,54 @@ def evaluate_meta_on_48k(cfg: EvalMeta48KConfig) -> None:
             break
 
         s_idx, s_y_np, q_idx, q_y_np = sampled
-        s_x = features[s_idx]
+        s_signal = signals[s_idx]
+        s_feat = features[s_idx]
         s_y = torch.tensor(s_y_np, dtype=torch.long, device=device)
-        q_x = features[q_idx]
+        q_signal = signals[q_idx]
+        q_feat = features[q_idx]
         q_y = torch.tensor(q_y_np, dtype=torch.long, device=device)
 
-        # 从 θ* 初始化 fast weights（不改变全局模型参数）
-        fast_weights = OrderedDict(
-            (name, param) for name, param in model.named_parameters()
-        )
+        # 针对当前 few-shot 任务构造任务特定知识矩阵（可选）
+        W_task_tensor: torch.Tensor | None = None
+        if cfg.use_knowledge_aware_init:
+            s_x_np = features_np[s_idx]
+            W_task_tensor = _build_task_specific_W_for_eval(
+                W_real=W_real,
+                support_features=s_x_np,
+                support_labels=s_y_np,
+                lambda_temp=cfg.ka_lambda,
+                device=device,
+            )
+
+        # 从 θ* 或原型融合初始化 fast weights（不改变全局模型参数）
+        if prototypes is not None and cfg.use_prototype_init:
+            # 使用支持集构造目标任务知识向量，并基于原型融合 θ0
+            s_x_np = features_np[s_idx]
+            w_target = compute_target_knowledge_vector(s_x_np)
+            theta_0_state = fuse_prototype_params(
+                prototypes=prototypes,
+                W_source=W_real,
+                w_target=w_target,
+                lambda_temp=cfg.ka_lambda,
+            )
+            # 注意：state_dict 中的 tensor 默认 requires_grad=False，
+            # 需要显式开启以支持内循环的 autograd.grad
+            param_names = {name for name, _ in model.named_parameters()}
+            fast_weights = OrderedDict(
+                (name, param.to(device).requires_grad_(True))
+                for name, param in theta_0_state.items()
+                if name in param_names
+            )
+        else:
+            fast_weights = OrderedDict(
+                (name, param) for name, param in model.named_parameters()
+            )
 
         # 内循环：在 48k 支持集上做任务级适应
         for _ in range(cfg.inner_steps):
-            logits_s, _ = model.forward_with_params(s_x, s_y, fast_weights)
+            logits_s, _ = model.forward_with_params(
+                s_signal, s_feat, s_y, fast_weights, W_override=W_task_tensor
+            )
             loss_task = F.cross_entropy(logits_s, s_y)
 
             grads = torch.autograd.grad(
@@ -224,9 +330,11 @@ def evaluate_meta_on_48k(cfg: EvalMeta48KConfig) -> None:
                 for (name, param), g in zip(fast_weights.items(), grads)
             )
 
-        # 查询集评估：使用适应后的 fast_weights
+        # 查询集评估：使用适应后的 fast_weights 与任务特定知识矩阵
         with torch.no_grad():
-            logits_q, _ = model.forward_with_params(q_x, q_y, fast_weights)
+            logits_q, _ = model.forward_with_params(
+                q_signal, q_feat, q_y, fast_weights, W_override=W_task_tensor
+            )
             preds_q = logits_q.argmax(dim=1)
             acc = (preds_q == q_y).float().mean().item()
             acc_list.append(acc)
