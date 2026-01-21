@@ -1,0 +1,88 @@
+# =========
+# Python
+# =========
+__pycache__/
+*.py[cod]
+*.pyd
+*.so
+*.egg-info/
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.coverage*
+htmlcov/
+.tox/
+.nox/
+dist/
+build/
+*.egg
+
+# Virtual environments
+.venv/
+venv/
+ENV/
+env/
+
+# Jupyter
+.ipynb_checkpoints/
+
+# IDE / OS
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db
+
+# =========
+# Deep Learning / ML artifacts (do not upload)
+# =========
+# Datasets / processed data (keep your raw code in repo, not big data)
+data/
+datasets/
+dataset/
+raw_data/
+processed_data/
+
+# Logs / outputs
+logs/
+log/
+outputs/
+output/
+results/
+result/
+runs/
+tb_logs/
+tensorboard/
+lightning_logs/
+
+# Experiment trackers
+wandb/
+mlruns/
+comet_ml/
+neptune/
+
+# Checkpoints / model weights
+checkpoints/
+checkpoint/
+ckpt/
+*.ckpt
+*.pth
+*.pt
+*.onnx
+*.h5
+*.hdf5
+*.tflite
+*.pb
+
+# Large arrays / serialized objects (often generated)
+*.npy
+*.npz
+*.pkl
+*.pickle
+
+# Common training logs
+*.log
+
+# Temporary
+tmp/
+temp/
+*.tmp

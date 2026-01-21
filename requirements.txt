@@ -1,0 +1,11 @@
+h5py
+learn2learn
+matplotlib
+numpy
+Pillow
+PyWavelets
+scikit_learn
+scipy
+torch
+torchvision
+vmdpy
