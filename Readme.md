@@ -44,3 +44,6 @@ python train_dtn.py --dataset CWRU --preprocess FFT --test_domain 3 --ways 10 --
 python train_dtn.py --dataset CWRU --preprocess PHYS --kg_dir ./data/kg --test_domain 3 --ways 10 --shots 5 --episodes 100 --dtn_steps 200 --dtn_lr 1e-3
 ~~~
 
+待优化：
+当前 dtn 目录结构未融入整体项目结构
+使用的 models 和另外的 pipeline 不一致，后续需要调整
