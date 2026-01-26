@@ -286,6 +286,23 @@ def train_model(args, model, maml, opt, loss,
 
     # 开始训练迭代
     for iteration in range(1, args.iters+1):
+        # # KG alpha 退火：前期保持强KG，后期再缓慢减弱到下限（避免中期就“关掉KG”）
+        # if hasattr(model, "kg_alpha_scale"):
+        #     if args.iters > 1:
+        #         progress = (iteration - 1) / float(args.iters - 1)  # [0,1]
+        #     else:
+        #         progress = 0.0
+        #     warmup_ratio = 0.6
+        #     min_scale = 0.2
+        #     if progress <= warmup_ratio:
+        #         alpha_scale = 1.0
+        #     else:
+        #         t = (progress - warmup_ratio) / max(1e-8, (1.0 - warmup_ratio))  # [0,1]
+        #         alpha_scale = min_scale + 0.5 * (1.0 - min_scale) * (1.0 + np.cos(np.pi * t))
+        #     model.kg_alpha_scale.fill_(alpha_scale)
+        #     if args.log and hasattr(model, "kg_alpha"):
+        #         alpha_value = (torch.sigmoid(model.kg_alpha) * model.kg_alpha_scale).item()
+        #         logging.info('KG alpha(scale): {:.6f}, alpha: {:.6f}'.format(alpha_scale, alpha_value))
         # 清零梯度，准备新一轮反向传播
         opt.zero_grad()
         # 初始化元训练误差累加器

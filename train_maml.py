@@ -154,6 +154,9 @@ if __name__ == "__main__":
                                                 args.shots,
                                                 train_domains_str,
                                                 args.test_domain)
+    # FFT 需要把 use_kg / 不 use_kg 的日志拆分到不同文件，避免混写
+    if args.preprocess == 'FFT':
+        experiment_title += '_kg' if bool(args.use_kg) else '_nokg'
     if args.plot:
         if not os.path.exists(args.plot_path):
             os.makedirs(args.plot_path)

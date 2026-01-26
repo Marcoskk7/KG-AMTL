@@ -52,6 +52,12 @@ class CNN1D(nn.Module):
             # KG matrices as buffers (moved with .to(device))
             self.register_buffer("W", torch.zeros(self.output_size, 31), persistent=True)  # (10,31)
             self.register_buffer("P", torch.eye(self.output_size), persistent=True)       # (10,10)
+            # # KG gate strength (learnable) + schedule scale
+            # # 用 sigmoid 映射到 (0,1)，避免 alpha 过大导致不稳定
+            # self.kg_alpha = nn.Parameter(torch.tensor(0.0))
+            # self.register_buffer("kg_alpha_scale", torch.tensor(1.0), persistent=True)
+            # # Gate temperature (optional, to avoid saturation)
+            # self.register_buffer("kg_temp", torch.tensor(1.0), persistent=True)
             # fast_adapt 会用这个 flag 决定是否在 support 传入真值标签进行门控
             self.supports_label_gate = True
         else:

@@ -32,3 +32,15 @@ python train_maml.py --dataset CWRU --preprocess FFT --ways 10 --shots 5 --train
 python train_maml.py --dataset CWRU --preprocess PHYS --kg_dir ./data/kg --ways 10 --shots 5 --train_domains "0,1,2" --test_domain 3 --iters 10
 ~~~
 
+4. DTN 理论下界 baseline（每个 episode 从零初始化并仅用 support 训练），在 load3（domain=3）上评估：
+
+FFT（与当前 CWRU FFT pipeline 一致）：
+~~~bash
+python train_dtn.py --dataset CWRU --preprocess FFT --test_domain 3 --ways 10 --shots 5 --episodes 100 --dtn_steps 200 --dtn_lr 1e-3
+~~~
+
+（可选）PHYS（31维物理特征 pipeline，需要先按第2步生成 KG 文件）：
+~~~bash
+python train_dtn.py --dataset CWRU --preprocess PHYS --kg_dir ./data/kg --test_domain 3 --ways 10 --shots 5 --episodes 100 --dtn_steps 200 --dtn_lr 1e-3
+~~~
+
